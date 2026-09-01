@@ -43,6 +43,32 @@ stages:
         workingDirectory: '$(System.DefaultWorkingDirectory)/env/dev'
 
     
+- stage: Terraform_security_scan
+  displayName: 'Install Checkov'
+  dependsOn: Terraform_init_validate
+  condition: succeeded()
+
+  jobs:
+  - job: security_scan
+    displayName: 'Ceckov security scan'
+
+    steps:
+    - task: Bash@3
+      displayName : 'Install Checkov'
+      inputs:
+        targetType: 'inline'
+        script: |
+          python3 -m pip install --upgrade pip
+          pip3 install checkov
+
+    - task: Bash@3
+      displayName: 'Run Checkov Scan'
+      inputs: 
+        targetType: 'inline'
+        workingDirectory:  '$(System.DefaultWorkingDirectory)/env/dev'
+        script: |
+          checkov -d .
+
 
 - stage: Terraform_Plan
   displayName: 'Terraform Plan'

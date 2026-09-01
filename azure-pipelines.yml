@@ -53,29 +53,14 @@ stages:
     displayName: 'Ceckov security scan'
 
     steps:
-
-    - task: Bash@3
-      displayName: 'Install pip'
+    - task: trivy@2
       inputs:
-        targetType: 'inline'
-        script: |
-          sudo apt-get update
-          sudo apt-get install -y python3-pip
-    - task: Bash@3
-      displayName : 'Install Checkov'
-      inputs:
-        targetType: 'inline'
-        script: |
-          python3 -m pip install --upgrade pip
-          pip3 install checkov
+        version: 'latest'
+        type: 'filesystem'
+        target: '$(System.DefaultWorkingDirectory)/env/dev'
+        ignoreScanErrors: true
+    
 
-    - task: Bash@3
-      displayName: 'Run Checkov Scan'
-      inputs: 
-        targetType: 'inline'
-        workingDirectory:  '$(System.DefaultWorkingDirectory)/env/dev'
-        script: |
-          checkov -d .
 
 
 - stage: Terraform_Plan

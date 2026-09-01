@@ -53,6 +53,14 @@ stages:
     displayName: 'Ceckov security scan'
 
     steps:
+
+    - task: Bash@3
+      displayName: 'Install pip'
+      inputs:
+        targetType: 'inline'
+        script: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
     - task: Bash@3
       displayName : 'Install Checkov'
       inputs:

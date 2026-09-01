@@ -34,3 +34,34 @@ stages:
         backendAzureRmStorageAccountName: 'stgbknd'
         backendAzureRmContainerName: 'bkndcrn'
         backendAzureRmKey: 'dev.tfstate'
+
+    - task: TerraformTask@5
+      displayName: 'Terraform validate'
+      inputs:
+        provider: 'azurerm'
+        command: 'validate'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/env/dev'
+
+    
+
+- stage: Terraform_Plan
+  displayName: 'Terraform Plan'
+  dependsOn: Terraform_init_validate
+  condition: succeeded()
+
+  jobs: 
+  - job: Plan
+    displayName: 'Terraform Plan'
+    
+    steps:
+    - task: TerraformTask@5
+      displayName: 'Terraform Plan'
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/env/dev'
+        environmentServiceNameAzureRM: 'aks-svc'
+
+    
+
+
